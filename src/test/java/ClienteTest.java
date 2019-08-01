@@ -36,7 +36,7 @@ public class ClienteTest {
     	WebTarget target = client.target("http://localhost:8000");
     	
     	// faz uma requisição get para o path, parseando para String
-    	String conteudo = target.path("/carrinhos").request().get(String.class);
+    	String conteudo = target.path("/carrinhos/1").request().get(String.class);
     	
     	// checa se o conteudo retornado é o que se estava esperando e a conexão com o servidor está ok
     	Carrinho carrinho = (Carrinho) new XStream().fromXML(conteudo);
