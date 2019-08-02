@@ -19,7 +19,7 @@ public class Servidor {
 	}
 
 	public static HttpServer inicializaServidor() {
-		URI uri = URI.create("http://localhost:8000/");
+		URI uri = URI.create("http://localhost:8080/");
 		ResourceConfig config = new ResourceConfig().packages("br.com.alura.loja");
 		
 		// levantar servidor do grizzly	
