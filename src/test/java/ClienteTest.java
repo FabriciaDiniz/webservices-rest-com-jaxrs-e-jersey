@@ -20,6 +20,7 @@ import br.com.alura.loja.modelo.Produto;
 public class ClienteTest {
 
 	private HttpServer server;
+	private Client client;
 
 	@Before
 	public void startaServidor() {
@@ -34,7 +35,7 @@ public class ClienteTest {
 	@Test
 	public void testaQueBuscarUmCarrinhoTrazOCarrinhoEsperado() {
 
-		Client client = ClientBuilder.newClient();
+		client = ClientBuilder.newClient();
 
 		// pega a URI base do servidor para fazer as requisições
 		WebTarget target = client.target("http://localhost:8080");
@@ -65,6 +66,10 @@ public class ClienteTest {
 		Entity<String> entity = Entity.entity(xml, MediaType.APPLICATION_XML);
 
 		Response response = target.path("/carrinhos").request().post(entity);
-		Assert.assertEquals("<status>sucesso</status>", response.readEntity(String.class));
+		Assert.assertEquals(201, response.getStatus());
+		
+		String location = response.getHeaderString("Location");
+		String conteudo = client.target(location).request().get(String.class);
+		Assert.assertTrue(conteudo.contains("Tablet"));
 	}
 }
