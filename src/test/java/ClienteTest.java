@@ -6,6 +6,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,10 +23,18 @@ public class ClienteTest {
 
 	private HttpServer server;
 	private Client client;
+	private WebTarget target;
 
 	@Before
 	public void startaServidor() {
-		this.server = Servidor.inicializaServidor();
+		
+		server = Servidor.inicializaServidor();
+		
+		// criando client config para poder ver os logs do q foi feito
+		ClientConfig config = new ClientConfig();
+		config.register(new LoggingFilter());
+		
+		this.client = ClientBuilder.newClient(config);
 	}
 
 	@After
@@ -35,16 +45,12 @@ public class ClienteTest {
 	@Test
 	public void testaQueBuscarUmCarrinhoTrazOCarrinhoEsperado() {
 
-		client = ClientBuilder.newClient();
-
-		// pega a URI base do servidor para fazer as requisições
-		WebTarget target = client.target("http://localhost:8080");
+		target = client.target("http://localhost:8080");
 
 		// faz uma requisição get para o path, parseando para String
 		String conteudo = target.path("/carrinhos/1").request().get(String.class);
 
-		// checa se o conteudo retornado é o que se estava esperando e a conexão com o
-		// servidor está ok
+		// checa se o conteudo retornado é o que se estava esperando
 		Carrinho carrinho = (Carrinho) new XStream().fromXML(conteudo);
 		Assert.assertEquals("Rua Vergueiro 3185, 8 andar", carrinho.getRua());
 
@@ -53,8 +59,7 @@ public class ClienteTest {
 	@Test
 	public void testaQueAdicionarCarrinhoFunciona() {
 
-		Client client = ClientBuilder.newClient();
-		WebTarget target = client.target("http://localhost:8080");
+		target = client.target("http://localhost:8080");
 
 		Carrinho carrinho = new Carrinho();
 		carrinho.adiciona(new Produto(314L, "Tablet", 999, 1));
