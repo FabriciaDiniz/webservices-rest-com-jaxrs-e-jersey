@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.gson.Gson;
-import com.thoughtworks.xstream.XStream;
 
 public class Carrinho {
 
@@ -71,10 +70,6 @@ public class Carrinho {
 	
 	public List<Produto> getProdutos() {
 		return produtos;
-	}
-
-	public String toXML() {
-		return new XStream().toXML(this);
 	}
 
 	public String toJson() {

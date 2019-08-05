@@ -13,7 +13,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.thoughtworks.xstream.XStream;
+import com.google.gson.Gson;
 
 import br.com.alura.Servidor;
 import br.com.alura.loja.modelo.Carrinho;
@@ -51,7 +51,7 @@ public class ClienteTest {
 		String conteudo = target.path("/carrinhos/1").request().get(String.class);
 
 		// checa se o conteudo retornado é o que se estava esperando
-		Carrinho carrinho = (Carrinho) new XStream().fromXML(conteudo);
+		Carrinho carrinho = new Gson().fromJson(conteudo, Carrinho.class);
 		Assert.assertEquals("Rua Vergueiro 3185, 8 andar", carrinho.getRua());
 
 	}
@@ -65,10 +65,10 @@ public class ClienteTest {
 		carrinho.adiciona(new Produto(314L, "Tablet", 999, 1));
 		carrinho.setRua("Rua Vergueiro");
 		carrinho.setCidade("Sao Paulo");
-		String xml = carrinho.toXML();
+		String json = carrinho.toJson();
 
 		// cria uma entidade para representar o xml q será passado pro post
-		Entity<String> entity = Entity.entity(xml, MediaType.APPLICATION_XML);
+		Entity<String> entity = Entity.entity(json, MediaType.APPLICATION_JSON);
 
 		Response response = target.path("/carrinhos").request().post(entity);
 		Assert.assertEquals(201, response.getStatus());

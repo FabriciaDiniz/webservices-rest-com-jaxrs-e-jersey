@@ -13,7 +13,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import com.thoughtworks.xstream.XStream;
+import com.google.gson.Gson;
 
 import br.com.alura.loja.dao.CarrinhoDAO;
 import br.com.alura.loja.modelo.Carrinho;
@@ -24,16 +24,16 @@ public class CarrinhoResource {
 
 	@Path("{id}")
 	@GET
-	@Produces(MediaType.APPLICATION_XML)
+	@Produces(MediaType.APPLICATION_JSON)
 	public String busca(@PathParam("id") long id) {
 	    Carrinho carrinho = new CarrinhoDAO().busca(id);
-	    return carrinho.toXML();
+	    return carrinho.toJson();
 	}
 	
 	@POST
-	@Consumes(MediaType.APPLICATION_XML)
+	@Consumes(MediaType.APPLICATION_JSON)
 	public Response adiciona(String conteudo) {
-		Carrinho carrinho = (Carrinho) new XStream().fromXML(conteudo);
+		Carrinho carrinho = new Gson().fromJson(conteudo, Carrinho.class);
 		new CarrinhoDAO().adiciona(carrinho);
 		URI uri = URI.create("/carrinhos/" + carrinho.getId());
 		return Response.created(uri).build(); //retorna 201
@@ -48,17 +48,16 @@ public class CarrinhoResource {
 		return Response.ok().build();
 	}
 	
-	// teste:
+	// teste PUT:
 	/* curl -v -X PUT -H "Content-Type: application/xml" -d 
-	 * "<br.com.alura.loja.modelo.Produto> <id>3467</id> <quantidade>1</quantidade>    </br.com.alura.loja.modelo.Produto>" 
-	 * http://localhost:8080/carrinhos/1/produtos/3467/quantidade*/
+	 * "{"id": "3467","quantidade": "1"}" http://localhost:8080/carrinhos/1/produtos/3467/quantidade*/
 	
 	@Path("{id}/produtos/{produtoId}/quantidade")
     @PUT
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response alteraProduto(@PathParam("id") long id, @PathParam("produtoId") long produtoId, String conteudo) {
 		Carrinho carrinho = new CarrinhoDAO().busca(id);
-		Produto produto = (Produto) new XStream().fromXML(conteudo);
+		Produto produto = new Gson().fromJson(conteudo, Produto.class);
 		carrinho.trocaQuantidade(produto);
         return Response.ok().build();
     }
