@@ -42,6 +42,8 @@ public class ClienteTest {
 		server.stop();
 	}
 
+	//TO-DO: ver o que está dando errado aqui
+	
 	@Test
 	public void testaQueBuscarUmCarrinhoTrazOCarrinhoEsperado() {
 
@@ -59,7 +61,7 @@ public class ClienteTest {
 	@Test
 	public void testaQueAdicionarCarrinhoFunciona() {
 
-		target = client.target("http://localhost:8080");
+		target = client.target("http://localhost:8000");
 
 		Carrinho carrinho = new Carrinho();
 		carrinho.adiciona(new Produto(314L, "Tablet", 999, 1));
